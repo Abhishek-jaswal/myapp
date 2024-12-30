@@ -1,0 +1,60 @@
+// import React from react  means:
+// React is a library  and react is react-package
+// let me give you example:- suppose Jazz need coffee then he go to cafe and take coffee and came back .
+// key points: coffee is react-package and the cafe is react-library.and Jazz is Import
+import React from 'react'
+
+// import { getImageUrl } from './Profile';
+// Profile is a filename  and getImageUrl is file's function
+// let me give you example:- suppose Jazz need coffee then he go to cafe and take coffee and came back .
+// key points: coffee is file's function and the cafe is file and Jazz is Import
+
+import { getImageUrl } from './Profile';
+
+// export default function Navbar (){:
+// export means push. The default means main and the function Navber(){..} means create a component{function}
+// Components mean functions . React is depends on components 
+export default function Navbar (){
+
+// return need necessery things
+  return (
+    <div>
+         {/* <ul style={{
+      backgroundColor: 'black',
+      color: 'pink',
+      display:'inline-block'
+    }}>
+      <li>Improve the videophone</li>
+      <li>Prepare aeronautics lectures</li>
+      <li>Work on the alcohol-fuelled engine</li>
+    </ul> */}
+    <h1>Notable Scientists</h1>
+      <section className="profile">
+        <h2>Maria Skłodowska-Curie</h2>
+        <img
+          className="avatar"
+          src={getImageUrl('szV5sdG')}
+          alt="Maria Skłodowska-Curie"
+          width={70}
+          height={70}
+        />
+        <ul>
+          <li>
+            <b>Profession: </b> 
+            physicist and chemist
+          </li>
+          <li>
+            <b>Awards: 4 </b> 
+            (Nobel Prize in Physics, Nobel Prize in Chemistry, Davy Medal, Matteucci Medal)
+          </li>
+          <li>
+            <b>Discovered: </b>
+            polonium (chemical element)
+          </li>
+        </ul>
+      </section>
+      
+      
+    </div>
+  )
+}
