@@ -1,24 +1,30 @@
 const canvas = document.getElementById('pong');
 const ctx = canvas.getContext('2d');
+const playerNameInput = document.getElementById('playerNameInput');
+const startBtn = document.getElementById('startBtn');
+const stopBtn = document.getElementById('stopBtn');
 
-// Game settings
+// Settings
 const PADDLE_WIDTH = 12;
 const PADDLE_HEIGHT = 100;
 const BALL_RADIUS = 10;
 const PADDLE_MARGIN = 20;
-const PLAYER_SPEED = 5;
 const AI_SPEED = 3.5;
 
-// Game state
+// State
 let playerY = canvas.height/2 - PADDLE_HEIGHT/2;
 let aiY = canvas.height/2 - PADDLE_HEIGHT/2;
 let ballX = canvas.width/2;
 let ballY = canvas.height/2;
-let ballSpeedX = 5 * (Math.random() > 0.5 ? 1 : -1);
-let ballSpeedY = 3 * (Math.random() > 0.5 ? 1 : -1);
+let ballSpeedX = 0;
+let ballSpeedY = 0;
+let gameRunning = false;
+let playerName = "Player 1";
+let animationId = null;
 
 // Mouse control for player paddle
 canvas.addEventListener('mousemove', function(evt) {
+    if (!gameRunning) return;
     const rect = canvas.getBoundingClientRect();
     let mouseY = evt.clientY - rect.top;
     playerY = mouseY - PADDLE_HEIGHT/2;
@@ -27,7 +33,28 @@ canvas.addEventListener('mousemove', function(evt) {
     if (playerY + PADDLE_HEIGHT > canvas.height) playerY = canvas.height - PADDLE_HEIGHT;
 });
 
-// Draw everything
+// Start/Stop controls
+startBtn.onclick = function() {
+    let name = playerNameInput.value.trim();
+    if (name.length > 0) {
+        playerName = name;
+    } else {
+        playerName = "Player 1";
+    }
+    startBtn.disabled = true;
+    playerNameInput.disabled = true;
+    stopBtn.disabled = false;
+    if (!gameRunning) {
+        reset();
+        gameRunning = true;
+        gameLoop();
+    }
+}
+stopBtn.onclick = function() {
+    stopGame();
+}
+
+// Draw
 function draw() {
     // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -50,6 +77,15 @@ function draw() {
     ctx.beginPath();
     ctx.arc(ballX, ballY, BALL_RADIUS, 0, Math.PI*2);
     ctx.fill();
+
+    // Draw names
+    ctx.font = "20px Arial";
+    ctx.fillStyle = "#3bb273";
+    ctx.textAlign = "left";
+    ctx.fillText(playerName, PADDLE_MARGIN+2, 28);
+    ctx.textAlign = "right";
+    ctx.fillStyle = "#b24a3b";
+    ctx.fillText("Computer", canvas.width - PADDLE_MARGIN-2, 28);
 }
 
 // Update game state
@@ -110,20 +146,31 @@ function update() {
 
 // Reset ball and paddles
 function reset() {
+    playerY = canvas.height/2 - PADDLE_HEIGHT/2;
+    aiY = canvas.height/2 - PADDLE_HEIGHT/2;
     ballX = canvas.width/2;
     ballY = canvas.height/2;
     // Ball direction is random
     ballSpeedX = 5 * (Math.random() > 0.5 ? 1 : -1);
     ballSpeedY = 3 * (Math.random() > 0.5 ? 1 : -1);
-    aiY = canvas.height/2 - PADDLE_HEIGHT/2;
 }
 
 // Main game loop
 function gameLoop() {
+    if (!gameRunning) return;
     update();
     draw();
-    requestAnimationFrame(gameLoop);
+    animationId = requestAnimationFrame(gameLoop);
 }
 
-// Start game
-gameLoop();
+// Stop game
+function stopGame() {
+    gameRunning = false;
+    cancelAnimationFrame(animationId);
+    stopBtn.disabled = true;
+    startBtn.disabled = false;
+    playerNameInput.disabled = false;
+    draw(); // draw once to keep current frame
+}
+
+draw(); // initial draw before game starts
